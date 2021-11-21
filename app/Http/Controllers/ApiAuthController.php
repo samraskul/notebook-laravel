@@ -15,7 +15,7 @@ class ApiAuthController extends Controller
     {
         $username = $request->username;
         $password = $request->password;
-        $req = Http::post(env('APP_URL') . '/oauth/token', [
+        $req = Http::post(env('APP_URL_HTTP') . '/oauth/token', [
             "grant_type" => "password",
             "client_id" => 2,
             "client_secret" => env('CLIENT_SECRET'),
