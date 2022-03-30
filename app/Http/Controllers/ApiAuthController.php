@@ -15,13 +15,33 @@ class ApiAuthController extends Controller
     {
         $username = $request->username;
         $password = $request->password;
-        $req = Http::post(env('APP_URL_HTTP') . '/oauth/token', [
-            "grant_type" => "password",
-            "client_id" => 2,
-            "client_secret" => env('CLIENT_SECRET'),
-            "username" => $username,
-            "password" => $password
-        ]);
+
+        $credentials = ['email' => $username, 'password' => $password];
+        $attempt = Auth::attempt($credentials);
+
+        
+
+        if($attempt){
+            $user = User::where('email', $username)->first();
+            $token = $user->createToken('login')->accessToken;
+            return response()->json([
+                'access_token' => $token,
+                'expires_in' =>  31536000,
+                'refresh_token' => "",
+                'token_type' => "Bearer",
+            ]);
+        }
+
+        return response()->json([ 'status' => false, 'message' => "username or password is wrong"]);
+
+        // $req = Http::post(env('APP_URL_HTTP') . '/oauth/token', [
+        //     "grant_type" => "password",
+        //     "client_id" => 2,
+        //     "client_secret" => env('CLIENT_SECRET'),
+        //     "username" => $username,
+        //     "password" => $password
+        // ]);
+        // return $req->body();
 
         // $res = json_decode( $req->body());
         // dd($res);
@@ -36,8 +56,8 @@ class ApiAuthController extends Controller
         // $userObj->id = $user['id'];
         // $userObj->accessToken = $accessToken;
         // dd($userObj);
-        return $req->body();
 
+        // return response()->json(['hi'=>'bye']);
     }
 
     public function register(Request $request)
@@ -79,14 +99,32 @@ class ApiAuthController extends Controller
             $user->save();
         }
         
-        $req = Http::post(env('APP_URL') . '/oauth/token', [
-            "grant_type" => "password",
-            "client_id" => 2,
-            "client_secret" => "r36gKazDFlNNvPkPQuCWMua8uymGFHJ5S3hb0qVw",
-            "username" => $username,
-            "password" => $password
+        $token = $user->createToken('login')->accessToken;
+
+        return response()->json([
+            'access_token' => $token,
+            'expires_in' =>  31536000,
+            'refresh_token' => "",
+            'token_type' => "Bearer",
         ]);
+
+        // $req = Http::post(env('APP_URL') . '/oauth/token', [
+        //     "grant_type" => "password",
+        //     "client_id" => 2,
+        //     "client_secret" => "r36gKazDFlNNvPkPQuCWMua8uymGFHJ5S3hb0qVw",
+        //     "username" => $username,
+        //     "password" => $password
+        // ]);
         
-        return $req->body();
+        // return $req->body();  
     }
+
+    public function check(){
+        if(Auth::check()){
+            return response()->json(['message' => 'valid'], 200);
+        }
+
+        return response()->json(['message' => 'not valid'], 300);
+    }
+
 }

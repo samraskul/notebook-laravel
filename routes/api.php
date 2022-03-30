@@ -34,8 +34,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('login', [ApiAuthController::class, 'login']);
 Route::post('register', [ApiAuthController::class, 'register']);
 
-Route::group(['middleware'=>['loginIfAuthenticate']], function(){//auth:api
+Route::group(['middleware'=>['auth:api']], function(){//auth:api
     
+    Route::get('check', [ApiAuthController::class, 'check']);
     Route::get('navbar-menus', [NavbarMenuController::class, 'index']);
     Route::post('navbar-menus', [NavbarMenuController::class, 'store']);
     Route::post('navbar-menus-edit/{id}', [NavbarMenuController::class, 'update']);

@@ -18,7 +18,7 @@ class PostService
             $user = User::find($userId);
             if($user){
                 if($user->type == "public"){
-                    $posts = Post::where('user_id', $user->id)->where('link', $link)->orderBy('order')->get();
+                    $posts = Post::where('user_id', $user->id)->where('link', $link)->get();
                 }else{
                     // this user is private
                 }
@@ -27,7 +27,7 @@ class PostService
             }
         }else{
             if(Auth::check()){
-                $posts = Post::where('user_id', Auth::user()->id)->where('link', $link)->orderBy('order')->get();
+                $posts = Post::where('user_id', Auth::user()->id)->where('link', $link)->get();
             }else{
                 //in order to use website you should signup or login
             }
